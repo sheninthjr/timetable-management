@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -33,79 +32,123 @@ import UserDashboard from "@/pages/user/Dashboard";
 import UserNotifications from "@/pages/user/Notifications";
 
 import NotFound from "@/pages/NotFound";
+import { useEffect } from "react";
+import { timeToTriggerEmail } from "./email";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <SupabaseAuthProvider>
-          <AuthProvider>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Navigate to="/user/login" replace />} />
-              <Route path="/admin/login" element={<Login />} />
-              
-              {/* User routes */}
-              <Route path="/user/login" element={<UserLogin />} />
-              <Route path="/user/register" element={<UserRegister />} />
-              
-              {/* Protected user routes */}
-              <Route path="/user" element={
-                <UserProtectedRoute>
-                  <UserDashboardLayout />
-                </UserProtectedRoute>
-              }>
-                <Route path="dashboard" element={<UserDashboard />} />
-                <Route path="notifications" element={<UserNotifications />} />
-              </Route>
-              
-              {/* Protected admin routes */}
-              <Route path="/admin" element={
-                <ProtectedRoute>
-                  <DashboardLayout />
-                </ProtectedRoute>
-              }>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="dashboard/:year" element={<YearDashboard />} />
-                <Route path="dashboard/:year/:dept" element={<DepartmentDashboard />} />
-                <Route path="dashboard/:year/:dept/:section" element={<SectionDashboard />} />
-                
-                {/* Staff management */}
-                <Route path="staff/:year/:dept/:section" element={<StaffManagement />} />
-                
-                {/* Subject management */}
-                <Route path="subjects/:year/:dept/:section" element={<SubjectManagement />} />
-                
-                {/* Timetable related */}
-                <Route path="timetables/:year/:dept/:section" element={<TimetableGenerator />} />
-                <Route path="timetables/:year/:dept/:section/draft" element={<TimetableView />} />
-                
-                {/* Master timetable */}
-                <Route path="master/:year/:dept/:section" element={<MasterTimetable />} />
-                
-                {/* Substitutions */}
-                <Route path="substitutions/:year/:dept/:section" element={<SubstitutionManagement />} />
-                
-                {/* Notifications */}
-                <Route path="notifications/:year/:dept/:section" element={<NotificationManagement />} />
-                
-                {/* Settings */}
-                <Route path="settings" element={<Settings />} />
-              </Route>
-              
-              {/* 404 page */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            
-            <Toaster />
-            <Sonner />
-          </AuthProvider>
-        </SupabaseAuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    timeToTriggerEmail(); // will keep checking every minute
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <BrowserRouter>
+          <SupabaseAuthProvider>
+            <AuthProvider>
+              <Routes>
+                {/* Public routes */}
+                <Route
+                  path="/"
+                  element={<Navigate to="/user/login" replace />}
+                />
+                <Route path="/admin/login" element={<Login />} />
+
+                {/* User routes */}
+                <Route path="/user/login" element={<UserLogin />} />
+                <Route path="/user/register" element={<UserRegister />} />
+
+                {/* Protected user routes */}
+                <Route
+                  path="/user"
+                  element={
+                    <UserProtectedRoute>
+                      <UserDashboardLayout />
+                    </UserProtectedRoute>
+                  }
+                >
+                  <Route path="dashboard" element={<UserDashboard />} />
+                  <Route path="notifications" element={<UserNotifications />} />
+                </Route>
+
+                {/* Protected admin routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="dashboard/:year" element={<YearDashboard />} />
+                  <Route
+                    path="dashboard/:year/:dept"
+                    element={<DepartmentDashboard />}
+                  />
+                  <Route
+                    path="dashboard/:year/:dept/:section"
+                    element={<SectionDashboard />}
+                  />
+
+                  {/* Staff management */}
+                  <Route
+                    path="staff/:year/:dept/:section"
+                    element={<StaffManagement />}
+                  />
+
+                  {/* Subject management */}
+                  <Route
+                    path="subjects/:year/:dept/:section"
+                    element={<SubjectManagement />}
+                  />
+
+                  {/* Timetable related */}
+                  <Route
+                    path="timetables/:year/:dept/:section"
+                    element={<TimetableGenerator />}
+                  />
+                  <Route
+                    path="timetables/:year/:dept/:section/draft"
+                    element={<TimetableView />}
+                  />
+
+                  {/* Master timetable */}
+                  <Route
+                    path="master/:year/:dept/:section"
+                    element={<MasterTimetable />}
+                  />
+
+                  {/* Substitutions */}
+                  <Route
+                    path="substitutions/:year/:dept/:section"
+                    element={<SubstitutionManagement />}
+                  />
+
+                  {/* Notifications */}
+                  <Route
+                    path="notifications/:year/:dept/:section"
+                    element={<NotificationManagement />}
+                  />
+
+                  {/* Settings */}
+                  <Route path="settings" element={<Settings />} />
+                </Route>
+
+                {/* 404 page */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+
+              <Toaster />
+              <Sonner />
+            </AuthProvider>
+          </SupabaseAuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
